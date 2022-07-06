@@ -1,23 +1,21 @@
 const { defineConfig } = require('@vue/cli-service')
-const AutoImport = require('unplugin-auto-import/webpack')
-const Components = require('unplugin-vue-components/webpack')
-const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 
 module.exports = defineConfig({
   transpileDependencies: true,
   pluginOptions: {
     electronBuilder: {
-      preload: 'src/preload.js'
+      preload: 'src/preload.js',
+      builderOptions: {
+        'win': {
+          'target': 'zip'
+        },
+        'electronDownload': {
+          'mirror': 'http://npm.taobao.org/mirrors/electron/'
+        },
+        'extraResources': [
+          {'from': './src/data/', 'to': '../data'}
+        ]
+      }
     }
-  },
-  configureWebpack: {
-    plugins: [
-      AutoImport({
-        resolvers: [ElementPlusResolver()]
-      }),
-      Components({
-        resolvers: [ElementPlusResolver()]
-      })
-    ]
   }
 })

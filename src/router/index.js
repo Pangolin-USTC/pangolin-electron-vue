@@ -1,5 +1,5 @@
-import {createWebHistory, createRouter} from "vue-router"
-import FTPPage from "@/views/LoginPage"
+import {createWebHistory, createRouter, createWebHashHistory} from "vue-router"
+import LoginPage from "@/views/LoginPage"
 import ArticlePage from "@/views/ArticlePage"
 
 const routes = [
@@ -10,7 +10,7 @@ const routes = [
     {
         path: "/login",
         name: "LoginPage",
-        component: FTPPage
+        component: LoginPage
     },
     {
         path: "/article",
@@ -20,7 +20,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: process.env.IS_ELECTRON ? createWebHashHistory() : createWebHistory(),
     routes
 })
 
