@@ -130,6 +130,7 @@ export default {
     },
     ftpSync: async function () {
       this.loading = true
+      this.setContent()
       let result = await window.electronAPI.ftpSync()
       this.loading = false
       if (result)

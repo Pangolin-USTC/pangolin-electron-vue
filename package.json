@@ -19,6 +19,7 @@
     "element-plus": "^2.2.8",
     "hexo": "^6.2.0",
     "hexo-cli": "^4.3.0",
+    "hexo-renderer-kramed": "^0.1.4",
     "js-yaml": "^4.1.0",
     "mavon-editor": "^3.0.0-beta",
     "node-stream-zip": "^1.15.0",
