@@ -1,33 +1,54 @@
 <template>
-  <el-container v-loading="loading">
-    <el-aside width="250px">
-      <el-table :data="articleList" border @row-click="getContent">
-        <el-table-column prop="name" label="文件"/>
-      </el-table>
-      <el-button type="primary" @click="goBack">返回</el-button>
-      <el-button type="success" @click="openDialog">新建</el-button>
-      <el-button type="primary" @click="ftpSync">同步</el-button>
+  <el-container v-loading="loading" style="width: 100%; height: 100%">
+    <el-header style="padding: 30px"><el-page-header @back="goBack"/></el-header>
+    <el-main style="margin-top: 0; padding-top: 0">
+      <el-container>
+        <el-aside width="300px">
+          <el-container>
+            <el-main>
+              <el-scrollbar height="600px">
+                <el-table :data="articleList" border @row-click="getContent">
+                  <el-table-column prop="name" label="文件"/>
+                </el-table>
+              </el-scrollbar>
+            </el-main>
+            <el-footer>
+              <el-row justify="space-evenly">
+                <el-button type="success" @click="openDialog">新建</el-button>
+                <el-popconfirm
+                    title="确认要删除该文章？"
+                    cancel-button-type="primary"
+                    cancel-button-text="否"
+                    confirm-button-type="danger"
+                    confirm-button-text="是"
+                    @confirm="deleteArticle"
+                >
+                  <template #reference><el-button type="danger">删除</el-button></template>
+                </el-popconfirm>
+                <el-button type="primary" @click="ftpSync">同步</el-button>
+              </el-row>
+            </el-footer>
+          </el-container>
 
-      <el-dialog v-model="createDialog" title="请输入标题">
-        <el-input v-model="createTitle" ref="createInput" @keypress.enter="createArticle"/>
-        <el-button @click="createArticle" type="success">确认</el-button>
-        <el-button @click="this.createDialog = false">取消</el-button>
-      </el-dialog>
-    </el-aside>
+          <el-dialog v-model="createDialog" title="请输入标题" width="30%">
+            <el-input v-model="createTitle" ref="createInput" @keypress.enter="createArticle"/>
+            <template #footer>
+              <span>
+                <el-button @click="createArticle" type="success">确认</el-button>
+                <el-button @click="this.createDialog = false">取消</el-button>
+              </span>
+            </template>
+          </el-dialog>
+        </el-aside>
 
-    <el-main>
-      <mavon-editor v-model="editorValue"/>
-      <el-button type="primary" @click="setContent">保存</el-button>
-      <el-popconfirm
-        title="确认要删除该文章？"
-        cancel-button-type="primary"
-        cancel-button-text="否"
-        confirm-button-type="danger"
-        confirm-button-text="是"
-        @confirm="deleteArticle"
-      >
-        <template #reference><el-button type="danger">删除</el-button></template>
-      </el-popconfirm>
+        <el-main style="margin-top: 0; padding-top: 0">
+          <mavon-editor v-model="editorValue"
+                        :style="'height:' + editorHeight"
+                        @fullScreen="fullScreen"
+                        @save="setContent"
+          />
+        </el-main>
+      </el-container>
     </el-main>
   </el-container>
 </template>
@@ -46,7 +67,8 @@ export default {
       editorValue: '',
       selectedFilename: '',
       createDialog: false,
-      createTitle: ''
+      createTitle: '',
+      editorHeight: '680px'
     }
   },
 
@@ -89,7 +111,7 @@ export default {
       await window.electronAPI.createArticle(vm.createTitle)
       setTimeout(() => {
         vm.getArticleList()
-      }, 300)
+      }, 500)
       vm.createTitle = ''
       ElMessage.success('创建成功')
     },
@@ -114,6 +136,12 @@ export default {
         ElMessage.success('同步成功')
       else
         ElMessage.error('同步失败')
+    },
+    fullScreen: function(fullscreen) {
+      if (fullscreen)
+        this.editorHeight = 'auto'
+      else
+        this.editorHeight = '680px'
     }
   },
 }
